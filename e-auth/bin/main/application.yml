@@ -1,0 +1,22 @@
+server:
+   port: 8080
+
+spring:
+   application:
+      name: auth-service
+      
+eureka:
+   client:
+      serviceUrl:
+         defaultZone: http://localhost:8010/eureka
+
+logging:
+   level:
+      org.springframework.security: info
+      
+auth:
+   scope:
+      scopeMap:
+         report: [/article/allArticle,/admin/article/totalCount,/article/totalCount,/article/dataStatistics,/article/,/admin/article/all,/article/all,/article/aid,/article/restore,/article/uploadimg,/admin/article/dustbin/,/article/dustbin/,/article/dataStatistics,/admin/category/all,/admin/category/ids,/admin/category/,/tongji/pvStatisticsPerDay,/tongji/dataStatistics/]
+         demo-scope: [/wsv/cityName, /csv/cities]
+

@@ -1,0 +1,54 @@
+server:
+   port: 8060
+
+spring:
+   application:
+      name: zuul-service
+      
+eureka:
+   client:
+      serviceUrl:
+         defaultZone: http://127.0.0.1:8010/eureka
+
+auth:
+   checkAuthUrl: http://localhost:8080/oauth/check_auth
+
+ribbon:
+   ReadTimeout: 30000
+   SocketTimeout: 30000
+   
+zuul:
+   sensitive-headers:  # 不去掉任何请求头
+   routes:
+      auth:
+         path: /oauth/**
+         serviceId: auth-service
+         stripPrefix: false  # 不去掉前缀
+         
+      asv:
+         path: /article/**
+         serviceId: article-service
+         stripPrefix: false  # 不去掉前缀      
+         
+      asv2:
+         path: /admin/article/**
+         serviceId: article-service
+         stripPrefix: false  # 不去掉前缀 
+         
+      csv:
+         path: /admin/category/**
+         serviceId: category-service
+         stripPrefix: false  # 不去掉前缀
+         
+      tsv: 
+         path: /tongji/**
+         serviceId: tongji-service
+         stripPrefix: false  # 不去掉前缀
+         
+management: #系统监控
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+

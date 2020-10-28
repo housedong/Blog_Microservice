@@ -1,0 +1,23 @@
+mybatis:
+  config-location: classpath:/mybatis-config.xml  
+
+spring:
+   datasource:
+      url: jdbc:mysql:///user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
+      driver-class-name: com.alibaba.druid.pool.DruidDataSource
+
+   
+
+server: 
+  port: 8070
+  
+apiGateway: http://localhost:8060
+
+oauth: 
+  tokenUrl: ${apiGateway}/oauth/token
+  clientId: ysd-blog
+  clientSecret: 123456
+  
+     

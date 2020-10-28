@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysd.wr.mapper.ArticleMapper">
+    <insert id="addNewArticle" parameterType="com.ysd.wr.bean.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article SET title=#{title},mdContent=#{mdContent},htmlContent=#{htmlContent},summary=#{summary},cid=#{cid},uid=#{uid},publishDate=#{publishDate},state=#{state},editTime=#{editTime},nickname=#{nickname},cateName=#{cateName}
+    </insert>
+    <update id="pvIncrement" parameterType="Long">
+        UPDATE article set pageView=pageView+1 WHERE id=#{aid}
+    </update>
+    <update id="updateArticle" parameterType="com.ysd.wr.bean.Article">
+        UPDATE article SET
+        title=#{title},mdContent=#{mdContent},htmlContent=#{htmlContent},summary=#{summary},cid=#{cid},editTime=#{editTime}
+        <if test="state==1">
+            ,state=1
+        </if>
+        <if test="publishDate!=null">
+            ,publishDate=#{publishDate}
+        </if>
+        WHERE id=#{id}
+    </update>
+     <select id="getAllArticle" resultType="com.ysd.wr.bean.Article">
+        SELECT a.* FROM article a WHERE a.uid=#{uid}
+    </select>
+    <select id="getArticleByState" resultType="com.ysd.wr.bean.Article">
+        SELECT a.* FROM article a WHERE a.uid=#{uid}
+        <if test="state!=-1">
+           and a.state=#{state}
+        </if>
+        <if test="keywords!=null">
+            AND title LIKE concat('%',#{keywords},'%')
+        </if>
+        ORDER BY a.editTime DESC limit #{start},#{count};
+    </select>
+    <select id="getArticleByStateByAdmin" resultType="com.ysd.wr.bean.Article">
+        SELECT a.* FROM article a WHERE a.state=1 ORDER BY a.editTime DESC limit #{start},#{count};
+    </select>
+    <select id="getArticleCountByState" resultType="int">
+        SELECT count(*) FROM article
+        <where>
+            <if test="state!=-1">
+                AND state=#{state}
+            </if>
+            <if test="uid!=null">
+                AND uid=#{uid}
+            </if>
+            <if test="keywords!=null">
+                AND title LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+    <update id="updateArticleState">
+        UPDATE article SET state=#{state} WHERE id IN
+        <foreach collection="aids" item="aid" separator="," open="(" close=")">
+            #{aid}
+        </foreach>
+    </update>
+    <update id="updateArticleStateById" >
+        UPDATE article SET state=#{state} WHERE id = #{articleId}
+    </update>
+    <delete id="deleteArticleById">
+        DELETE FROM article WHERE id IN
+        <foreach collection="aids" item="aid" open="(" close=")" separator=",">
+            #{aid}
+        </foreach>
+    </delete>
+    <select id="getArticleById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT a.*,t.`tagName`,t.`id` FROM article a LEFT JOIN article_tags ats ON a.`id`=ats.`aid` LEFT JOIN tags t ON ats.`tid`=t.`id` WHERE a.id=#{aid}
+    </select>
+
+    <resultMap id="BaseResultMap" type="com.ysd.wr.bean.Article">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="cid" property="cid"/>
+        <result column="uid" property="uid"/>
+        <result column="publishDate" property="publishDate"/>
+        <result column="editTime" property="editTime"/>
+        <result column="state" property="state"/>
+        <result column="pageView" property="pageView"/>
+        <result column="mdContent" property="mdContent"/>
+        <result column="htmlContent" property="htmlContent"/>
+        <result column="summary" property="summary"/>
+        <result column="nickname" property="nickname"/>
+        <result column="cateName" property="cateName"/>
+        <collection property="tags" ofType="com.ysd.wr.bean.Tags" column="tagName">
+            <id property="id" column="tid"/>
+            <result property="tagName" column="tagName"/>
+        </collection>
+    </resultMap>
+
+</mapper>
